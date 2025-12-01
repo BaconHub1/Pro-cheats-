@@ -1,6 +1,6 @@
 --// Custom Loader Script
 
-local url = "loadstring(game:HttpGet("https://api.junkie-development.de/api/v1/luascripts/public/28d5d771739de2545924df85303ea3350b682438833c611108f4b08bd0455d05/download"))()"
+local url = "https://api.junkie-development.de/api/v1/luascripts/public/1bcfd53e9057899c2fbca5e23fd7ebe769787ddb8c19b2514337451fe7714ac2/download"
 
 local success, response = pcall(function()
     return game:HttpGet(url)
@@ -11,3 +11,4 @@ if success then
 else
     warn("Failed to load script:", response)
 end
+
